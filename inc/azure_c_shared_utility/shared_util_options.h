@@ -39,7 +39,7 @@ extern "C"
     static STATIC_VAR_UNUSED const char* const OPTION_CURL_FRESH_CONNECT = "CURLOPT_FRESH_CONNECT";
     static STATIC_VAR_UNUSED const char* const OPTION_CURL_FORBID_REUSE = "CURLOPT_FORBID_REUSE";
     static STATIC_VAR_UNUSED const char* const OPTION_CURL_VERBOSE = "CURLOPT_VERBOSE";
-
+    static STATIC_VAR_UNUSED const char* const OPTION_CURL_INTERFACE = "CURLOPT_INTERFACE";
     static STATIC_VAR_UNUSED const char* const OPTION_NET_INT_MAC_ADDRESS = "net_interface_mac_address";
 
     static STATIC_VAR_UNUSED const char* const OPTION_SET_TLS_RENEGOTIATION = "tls_renegotiation";
