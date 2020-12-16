@@ -41,6 +41,7 @@ typedef struct HTTP_HANDLE_DATA_TAG
     long forbidReuse;
     long freshConnect;
     long verbose;
+    const char* interfaceName;
     const char* x509privatekey;
     const char* x509certificate;
     const char* certificates; /*a list of CA certificates*/
@@ -141,6 +142,7 @@ HTTP_HANDLE HTTPAPI_CreateConnection(const char* hostName)
                         httpHandleData->forbidReuse = 0;
                         httpHandleData->freshConnect = 0;
                         httpHandleData->verbose = 0;
+                        httpHandleData->interfaceName = NULL;
                         httpHandleData->x509certificate = NULL;
                         httpHandleData->x509privatekey = NULL;
                         httpHandleData->certificates = NULL;
@@ -764,6 +766,26 @@ HTTPAPI_RESULT HTTPAPI_SetOption(HTTP_HANDLE handle, const char* optionName, con
             httpHandleData->verbose = *(const long*)value;
             result = HTTPAPI_OK;
         }
+        else if (strcmp(OPTION_CURL_INTERFACE, optionName) == 0)
+        {
+            httpHandleData->interfaceName = (const char*)value;
+            if (httpHandleData->interfaceName != NULL && httpHandleData->interfaceName[0] != '\0')
+            {
+                if (curl_easy_setopt(httpHandleData->curl, CURLOPT_INTERFACE, httpHandleData->interfaceName) != CURLE_OK)
+                {
+                    LogError("unable to curl_easy_setopt");
+                    result = HTTPAPI_ERROR;
+                }
+                else
+                {
+                    result = HTTPAPI_OK;
+                }
+            }
+            else
+            {
+                result = HTTPAPI_OK;
+            }
+        }
         else if (strcmp(SU_OPTION_X509_PRIVATE_KEY, optionName) == 0 || strcmp(OPTION_X509_ECC_KEY, optionName) == 0)
         {
             httpHandleData->x509privatekey = value;
@@ -969,6 +991,19 @@ HTTPAPI_RESULT HTTPAPI_CloneOption(const char* optionName, const void* value, co
             else
             {
                 /*return OK when the private key has been clones successfully*/
+                result = HTTPAPI_OK;
+            }
+        }
+        else if (strcmp(OPTION_CURL_INTERFACE, optionName) == 0)
+        {
+            if (mallocAndStrcpy_s((char**)savedValue, value) != 0)
+            {
+                LogError("unable to clone the interface name");
+                result = HTTPAPI_ERROR;
+            }
+            else
+            {
+                /*return OK when the interface name has been cloned successfully*/
                 result = HTTPAPI_OK;
             }
         }
